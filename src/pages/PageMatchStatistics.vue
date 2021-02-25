@@ -13,13 +13,13 @@
             <div class="data-statistics__matchDay">{{allEvents["event_date"]}}</div>
             <!-- <div class="data-statistics__matchDay">{{allEvents["event_date"].slice(0, allEvents["event_date"].lastIndexOf('-')+3)}}</div> -->
             <div class="data-statistics__teams_result">
-                <div class="data-statistics__homeTeamLogo" :style="{ backgroundImage: 'url(' + setHomeTeamLogo + ')' }"></div>
-                <div class="data-statistics__team__name">{{allEvents["homeTeam"].team_name}}</div>
+                <div class="data-statistics__homeTeamLogo" :style="{ backgroundImage: `url(${homeTeamLogo})` }"></div>
+                <div class="data-statistics__team__name">{{homeTeamName}}</div>
                 <span class="data-statistics_team_score homeScore">{{allEvents.goalsHomeTeam !== '' ? allEvents.goalsHomeTeam : "-"}}</span>
                 <span class="data-statistics__team__name"> - </span>
                 <span class="data-statistics_team_score awayScore">{{allEvents.goalsAwayTeam !== '' ? allEvents.goalsAwayTeam : "-"}}</span>
-                <div class="data-statistics__team__name">{{allEvents["awayTeam"].team_name}}</div>
-                <div class="data-statistics__awayTeamLogo"  :style="{ backgroundImage: 'url(' + setAwayTeamLogo + ')' }"></div>
+                <div class="data-statistics__team__name">{{awayTeamName}}</div>
+                <div class="data-statistics__awayTeamLogo"  :style="{ backgroundImage: `url(${awayTeamLogo})` }"></div>
             </div>
         </div>
         <div class="forecast-container">
@@ -27,9 +27,9 @@
                 <tbody>
                     <tr class="forecast-row">
                         <td class="bookmaker-row"><div class="bookmaker-logo-container"><span class="bookmaker-logo"></span></div></td>
-                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">1</span><span class="odd">{{odds[0].odd}}</span></div></td>
-                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">X</span><span class="odd">{{odds[1].odd}}</span></div></td>
-                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">2</span><span class="odd">{{odds[2].odd}}</span></div></td>
+                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">1</span><span class="odd">{{oddsHomeWin ? oddsHomeWin: '-'}}</span></div></td>
+                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">X</span><span class="odd">{{oddsDraw ? oddsDraw : '-'}}</span></div></td>
+                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">2</span><span class="odd">{{oddsAwayWin ? oddsAwayWin : '-'}}</span></div></td>
                     </tr>
                 </tbody>
             </table>
@@ -68,8 +68,13 @@ export default {
             lineup: [],
             active_el: 1,
             showStatistics: true,
-            odds: [],
-            homeTeamLogo: ""
+            oddsHomeWin: null,
+            oddsDraw: null,
+            oddsAwayWin: null,
+            homeTeamName: "",
+            awayTeamName: "",
+            homeTeamLogo: "",
+            awayTeamLogo: ""
         };
     },
 
@@ -80,14 +85,6 @@ export default {
     },
 
     computed:{
-        setHomeTeamLogo(){
-            let homeTeamLogo = this.allEvents["homeTeam"].logo;
-            return homeTeamLogo;
-        },
-        setAwayTeamLogo(){
-            let awayTeamLogo = this.allEvents["awayTeam"].logo;
-            return awayTeamLogo;
-        },
         matchStatus(){
             if(this.allEvents.statusShort == "FT"){
                 return 'text-decoration:line-through;pointer-events: none;';
@@ -110,7 +107,9 @@ export default {
             /* eslint-disable */
             let data = response.json();
             data.then(data => {   
-                this.odds = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values;
+                this.oddsHomeWin = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[0].odd;
+                this.oddsDraw = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[1].odd;
+                this.oddsAwayWin = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[2].odd;
             });
         })
      
@@ -126,6 +125,10 @@ export default {
             let data = response.json();
             data.then(data => {  
                 this.allEvents = data["api"]["fixtures"][0];
+                this.homeTeamLogo = data["api"]["fixtures"][0]["homeTeam"].logo;
+                this.awayTeamLogo = data["api"]["fixtures"][0]["awayTeam"].logo;
+                this.homeTeamName = data["api"]["fixtures"][0]["homeTeam"].team_name;
+                this.awayTeamName = data["api"]["fixtures"][0]["awayTeam"].team_name;
                 if(data["api"]["fixtures"][0]["status"] != "Not Started"){
                     this.data = data["api"]["fixtures"][0]["statistics"];
                     this.lineup = this.allEvents["lineups"];

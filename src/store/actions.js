@@ -92,5 +92,27 @@ export default {
       .then(() => {
         commit("setAuthId", null);
       });
+  },
+  getSchedule(context) {
+    fetch(
+      "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2790",
+      {
+        method: "GET",
+        headers: {
+          "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
+          "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064"
+        }
+      }
+    )
+      .then(response => {
+        let data = response.json();
+        data.then(data => {
+          let matches = data["api"]["fixtures"];
+          context.commit("setSchedule", matches)
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 };

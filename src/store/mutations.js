@@ -16,5 +16,8 @@ export default {
 
   setUnsubscribeAuthObserver(state, unsubscribe) {
     state.unsubscribeAuthObserver = unsubscribe;
+  },
+  setSchedule(state, data) {
+    state.schedule = data
   }
 };

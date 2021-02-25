@@ -31,7 +31,6 @@ export default {
   },
   data() {
     return {
-      matches: [],
       teams: [],
       showFinishedMatches: false,
       forecast: false,
@@ -72,29 +71,38 @@ export default {
       });
       let forthcomingRounds = this.groupBy(forthcoming, "round");
       return forthcomingRounds
+    },
+    matches() {
+      const matches = this.$store.getters.getSchedule;
+      if(matches.length > 0) {
+        this.$root.$emit("dataReady");
+      }
+
+      return matches;
     }
   },
   beforeCreate() {
-    fetch(
-      "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2790",
-      {
-        method: "GET",
-        headers: {
-          "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-          "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064"
-        }
-      }
-    )
-    .then(response => {
-      let data = response.json();
-      data.then(data => {
-        this.matches = data["api"]["fixtures"];
-      });
-    })
-    .catch(err => {
-      console.log(err);
-    })
-    .then(() => this.$emit("ready"));
+    this.$store.dispatch("getSchedule");
+    // fetch(
+    //   "https://api-football-v1.p.rapidapi.com/v2/fixtures/league/2790",
+    //   {
+    //     method: "GET",
+    //     headers: {
+    //       "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
+    //       "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064"
+    //     }
+    //   }
+    // )
+    // .then(response => {
+    //   let data = response.json();
+    //   data.then(data => {
+    //     this.matches = data["api"]["fixtures"];
+    //   });
+    // })
+    // .catch(err => {
+    //   console.log(err);
+    // })
+    // .then(() => this.$emit("ready"));
   }
 };
 </script>

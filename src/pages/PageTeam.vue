@@ -4,10 +4,11 @@
       <div>
         <div
           class="data-team__teamLogo"
-          v-bind:style="{ backgroundImage: 'url(' + teamImage + ')' }"
+         
+          v-bind:style="{ backgroundImage: `url(${teamImage})`}"
         ></div>
         <div class="data-team__teamName">
-          <div class="data-team__teamText">{{teams.team_name}}</div>
+          <div class="data-team__teamText">{{teamName}}</div>
         </div>
       </div>
       <div>
@@ -35,6 +36,7 @@ export default {
   data() {
     return {
       teamImage: [],
+      teamName: "",
       teams: [],
       players: [],
       searchPlayer: "",
@@ -74,20 +76,20 @@ export default {
     }
   },
   beforeCreate() {
-    // fetch(
-    //   "https://apiv2.apifootball.com/?action=get_teams&league_id=148&team_id=" +
-    //     this.$route.params.id +
-    //     "&APIkey=4fe68f2c425088b321d90b1325cabe2da79209df56b7c1c32b9d2f825ede4d21"
-    // )
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     /* eslint-disable */
-    //     var grouped = this.groupBy(data[0]["players"], "player_type");
-    //     this.players = grouped;
-    //     this.teams = data[0];
-    //     this.teamImage = data[0].team_badge;
-    //   })
-    //   .then(() => this.$emit("ready"));
+    fetch("https://api-football-v1.p.rapidapi.com/v2/teams/team/"+this.$route.params.id, {
+      "method": "GET",
+      "headers": {
+        "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064",
+        "x-rapidapi-host": "api-football-v1.p.rapidapi.com"
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        /* eslint-disable */
+        this.teamImage = data["api"].teams[0].logo;
+        this.teamName = data["api"].teams[0].name;
+      })
+      .then(() => this.$emit("ready"));
 
       fetch("https://api-football-v1.p.rapidapi.com/v2/players/team/"+this.$route.params.id+"/2020-2021", {
         "method": "GET",
@@ -99,6 +101,7 @@ export default {
       .then(response => {
         let data = response.json();
         data.then(data => {
+          console.log(data);
           let myData = data["api"].players;
           let myPlayers = myData.filter(myData => myData.league == "Premier League");
           let usingPlayers = myPlayers.filter(myPlayers => myPlayers.position !== null);
@@ -150,6 +153,7 @@ export default {
   height: 100px;
   background-repeat: no-repeat;
   float: left;
+  background-size: 100px 100px;
 }
 .data-player__position {
   padding: 5px;
@@ -225,7 +229,7 @@ export default {
 }
 .data-team__headings_name {
   text-align: left;
-  width: 40%;
+  width: 30%;
   font-weight: bold;
   float: left;
   border-bottom: 2px solid #ddd;
@@ -238,7 +242,7 @@ export default {
 }
 .data-player__info_name {
   text-align: left;
-  width: 40%;
+  width: 30%;
   float: left;
 }
 .data-team__container {
@@ -247,5 +251,13 @@ export default {
   margin-top: 20px;
   position: relative;
   top: 14px;
+}
+.player_nationality {
+  width:24px;
+  height: 24px;
+}
+.team_info_nationality {
+  position: relative;
+  bottom: 10px;
 }
 </style>

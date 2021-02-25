@@ -10,6 +10,9 @@
         <div class="data-team__headings">
           <div class="team_info_age">Години</div>
         </div>
+         <div class="data-team__headings">
+          <div class="team_info_nationality">Държава</div>
+        </div>
         <div class="data-team__headings tshirt" title="Мачове">
           <img src="../assets/tshirt.png" />
         </div>
@@ -40,6 +43,9 @@
                 
                   <div class="data-player__info_name">{{key.firstname}} {{key.lastname}}</div>
                   <div class="data-player__info">{{key.age}}</div>
+                  <div class="data-player__info" >
+                     <img :src="playerNationality(key)" class="player_nationality" :alt="key"/>
+                  </div>
                   <div class="data-player__info">{{key["games"].appearences}}</div>
                   <div class="data-player__info">{{key["goals"].total}}</div>
                   <div class="data-player__info">{{key["goals"].assists}}</div>
@@ -57,6 +63,13 @@ export default {
   props: {
     AllPlayers: {
       required: true
+    }
+  },
+  methods:{
+    playerNationality(key){
+      let data = this.AllPlayers;
+      let srcImage = require('../assets/flags/'+key.nationality+'.png');
+      return srcImage;
     }
   }
   

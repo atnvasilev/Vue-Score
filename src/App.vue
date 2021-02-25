@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <MainHeader />
-    <router-view v-show="showPage" @ready="pageReady" />
-    <AppLoading v-show="!showPage" />
+    <router-view />
+    <!-- <router-view v-show="showPage" @ready="pageReady" />
+    <AppLoading v-show="!showPage" /> -->
   </div>
 </template>
 
@@ -30,6 +31,10 @@ export default {
       this.showPage = false;
       next();
     });
+
+    this.$root.$on('dataReady', ()=> {
+      this.showLoading = false
+    })
   }
 };
 </script>

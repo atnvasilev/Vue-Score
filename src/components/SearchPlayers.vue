@@ -70,6 +70,7 @@ export default {
         playersResult(){
             let data = this.Players;
             let grouped = this.groupBy(data, "position");
+            console.log(grouped);
             return grouped;
         }
     }

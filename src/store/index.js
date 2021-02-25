@@ -10,7 +10,8 @@ export default new Vuex.Store({
     users: {},
     authId: null,
     unsubscribeAuthObserver: null,
-    matchEvents: []
+    matchEvents: [],
+    schedule: []
   },
 
   getters,
