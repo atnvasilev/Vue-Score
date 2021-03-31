@@ -11,7 +11,9 @@ export default new Vuex.Store({
     authId: null,
     unsubscribeAuthObserver: null,
     matchEvents: [],
-    schedule: []
+    schedule: [],
+    ranking: [],
+    odds: []
   },
 
   getters,

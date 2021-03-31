@@ -4,5 +4,12 @@ export default {
     },
     getSchedule(state) {
       return state.schedule
+    },
+    getRanking(state) {
+      return state.ranking
+    },
+    getOdds(state){
+      return state.odds
     }
+    
   }

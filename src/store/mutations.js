@@ -19,5 +19,11 @@ export default {
   },
   setSchedule(state, data) {
     state.schedule = data
+  },
+  setRanking(state, data) {
+    state.ranking = data
+  },
+  setOdds(state, data){
+    state.odds = data;
   }
 };

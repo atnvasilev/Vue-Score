@@ -27,9 +27,9 @@
                 <tbody>
                     <tr class="forecast-row">
                         <td class="bookmaker-row"><div class="bookmaker-logo-container"><span class="bookmaker-logo"></span></div></td>
-                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">1</span><span class="odd">{{oddsHomeWin ? oddsHomeWin: '-'}}</span></div></td>
-                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">X</span><span class="odd">{{oddsDraw ? oddsDraw : '-'}}</span></div></td>
-                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">2</span><span class="odd">{{oddsAwayWin ? oddsAwayWin : '-'}}</span></div></td>
+                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">1</span><span class="odd">{{matchOdds[0].odd ? matchOdds[0].odd: '-'}}</span></div></td>
+                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">X</span><span class="odd">{{matchOdds[1].odd ? matchOdds[1].odd: '-'}}</span></div></td>
+                        <td class="forecast-home-container"><div class="forecast-home" :style="matchStatus"><span class="odd-type">2</span><span class="odd">{{matchOdds[2].odd ? matchOdds[2].odd: '-'}}</span></div></td>
                     </tr>
                 </tbody>
             </table>
@@ -91,27 +91,17 @@ export default {
             }else{
                return 'text-decoration:none;'; 
             }
+        },
+        
+        matchOdds(){
+            console.log(this.$store.getters.getOdds);
+            return this.$store.getters.getOdds;
         }
     },
 
     beforeCreate() {
-
-        fetch("https://api-football-v1.p.rapidapi.com/v2/odds/fixture/"+this.$route.params.id, {
-            "method": "GET",
-            "headers": {
-                "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-                "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064"
-            }
-        })
-        .then(response => {
-            /* eslint-disable */
-            let data = response.json();
-            data.then(data => {   
-                this.oddsHomeWin = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[0].odd;
-                this.oddsDraw = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[1].odd;
-                this.oddsAwayWin = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[2].odd;
-            });
-        })
+        
+        this.$store.dispatch("getOdds", this.$route.params.id);
      
         fetch("https://api-football-v1.p.rapidapi.com/v2/fixtures/id/"+this.$route.params.id, {
             "method": "GET",
@@ -123,7 +113,7 @@ export default {
         .then(response => {
             /* eslint-disable */
             let data = response.json();
-            data.then(data => {  
+            data.then(data => {
                 this.allEvents = data["api"]["fixtures"][0];
                 this.homeTeamLogo = data["api"]["fixtures"][0]["homeTeam"].logo;
                 this.awayTeamLogo = data["api"]["fixtures"][0]["awayTeam"].logo;

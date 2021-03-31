@@ -31,7 +31,6 @@ export default {
   },
   data() {
     return {
-      teams: [],
       showFinishedMatches: false,
       forecast: false,
       active_el: 1,

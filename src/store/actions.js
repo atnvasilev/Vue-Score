@@ -66,7 +66,7 @@ export default {
     });
   },
   // eslint-disable-next-line no-empty-pattern
-  signInWithEmailAndPassword({}, { email, password }) {
+  signInWithEmailAndPassword({ }, { email, password }) {
     return firebase.auth().signInWithEmailAndPassword(email, password);
   },
   initAuthentication({ dispatch, commit, state }) {
@@ -108,11 +108,51 @@ export default {
         let data = response.json();
         data.then(data => {
           let matches = data["api"]["fixtures"];
-          context.commit("setSchedule", matches)
+          context.commit("setSchedule", matches);
         });
       })
       .catch(err => {
         console.log(err);
+      })
+  },
+  getRanking(context) {
+    fetch("https://api-football-v1.p.rapidapi.com/v2/leagueTable/2790", {
+      method: "GET",
+      headers: {
+        "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
+        "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064"
+      }
+    })
+      .then(response => {
+        let data = response.json();
+        data.then(data => {
+          let standings = data["api"]["standings"][0];
+          context.commit("setRanking", standings);
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    // .then(() => this.$emit("ready"));
+  },
+  getOdds(context, matchID) {
+    fetch("https://api-football-v1.p.rapidapi.com/v2/odds/fixture/"+matchID, {
+      "method": "GET",
+      "headers": {
+        "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
+        "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064"
+      }
+    })
+      .then(response => {
+        /* eslint-disable */
+        let data = response.json();
+        data.then(data => {
+          let odds = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values;
+          context.commit("setOdds", odds);
+          // this.oddsHomeWin = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[0].odd;
+          // this.oddsDraw = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[1].odd;
+          // this.oddsAwayWin = data["api"]["odds"][0]["bookmakers"][0]["bets"][0].values[2].odd;
+        });
       })
   }
 };

@@ -101,7 +101,6 @@ export default {
       .then(response => {
         let data = response.json();
         data.then(data => {
-          console.log(data);
           let myData = data["api"].players;
           let myPlayers = myData.filter(myData => myData.league == "Premier League");
           let usingPlayers = myPlayers.filter(myPlayers => myPlayers.position !== null);

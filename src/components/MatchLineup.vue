@@ -41,7 +41,6 @@ export default {
     computed:{
         teamsCoach(){
             let coach = this.MatchInfo;
-            console.log(coach)
             this.$store.state.matchEvents = this.matchEvents;
             let names = [];
             for(var key in coach){

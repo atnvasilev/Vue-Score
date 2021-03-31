@@ -4,45 +4,56 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th class="ranking-head" v-for="(value,index) in headings" :key="index">{{value}}</th>
+            <th
+              class="ranking-head"
+              v-for="(value, index) in headings"
+              :key="index"
+            >
+              {{ value }}
+            </th>
           </tr>
         </thead>
         <tbody>
           <router-link
-            :to="{name: 'Team', params: {id: teams.team_id }}"
+            :to="{ name: 'Team', params: { id: teams.team_id } }"
             tag="tr"
-            v-for="(teams, index) in data"
+            v-for="(teams, index) in rankingData"
             :key="teams.team_id"
             class="ranking-team"
           >
             <td
-              v-if="index==0 || index==1 || index==2 || index==3"
+              v-if="index == 0 || index == 1 || index == 2 || index == 3"
               class="data-table-cl"
               title="Promotion - Champions League (Group Stage)"
-            >{{teams.rank}}</td>
+            >
+              {{ teams.rank }}
+            </td>
             <td
-              v-else-if="index==4"
+              v-else-if="index == 4"
               class="data-table-el"
               title="Promotion - Europa League (Group Stage)"
-            >{{teams.rank}}</td>
+            >
+              {{ teams.rank }}
+            </td>
             <td
-              v-else-if="index==17 || index==18 || index==19"
+              v-else-if="index == 17 || index == 18 || index == 19"
               class="data-table-relegation"
               title="Relegation - Championship"
-            >{{teams.rank}}</td>
-            <td v-else>{{teams.rank}}</td>
+            >
+              {{ teams.rank }}
+            </td>
+            <td v-else>{{ teams.rank }}</td>
             <td>
               <div class="standing-team-logo" :style="teamLogo(index)"></div>
             </td>
-            <td class="standing-team-name">{{teams.teamName}}
-            </td>
-            <td>{{teams["all"].matchsPlayed}}</td>
-            <td>{{teams["all"].win}}</td>
-            <td>{{teams["all"].draw}}</td>
-            <td>{{teams["all"].lose}}</td>
-            <td>{{teams["all"].goalsFor}}</td>
-            <td>{{teams["all"].goalsAgainst}}</td>
-            <td>{{teams.points}}</td>
+            <td class="standing-team-name">{{ teams.teamName }}</td>
+            <td>{{ teams["all"].matchsPlayed }}</td>
+            <td>{{ teams["all"].win }}</td>
+            <td>{{ teams["all"].draw }}</td>
+            <td>{{ teams["all"].lose }}</td>
+            <td>{{ teams["all"].goalsFor }}</td>
+            <td>{{ teams["all"].goalsAgainst }}</td>
+            <td>{{ teams.points }}</td>
             <td v-html="teamForm(teams['forme'])" class="teamForm"></td>
           </router-link>
         </tbody>
@@ -56,7 +67,6 @@ export default {
   name: "standing",
   data() {
     return {
-      data: [],
       headings: [
         "#",
         "Отбор",
@@ -68,19 +78,19 @@ export default {
         "В/Г",
         "Д/Г",
         "Точки",
-        "Форма"
-      ]
+        "Форма",
+      ],
     };
   },
   methods: {
     teamLogo(index) {
-      let logo = this.data[index]["logo"];
+      let logo = this.rankingData[index]["logo"];
       let style = "background-image:url(" + logo + ")";
       return style;
     },
     teamForm(lastMatches) {
       let str = "";
-      if(lastMatches){
+      if (lastMatches) {
         let form = lastMatches.split("");
         for (var i = 0; i < form.length; i++) {
           if (form[i] == "W") {
@@ -91,41 +101,22 @@ export default {
             str += '<div class="team-form lose">L</div>';
           }
         }
- 
-      }else{
+      } else {
         str += '<div class="team-form empty">-</div>';
       }
 
       return str;
+    },
+  },
+
+  computed : {
+    rankingData () {
+      return this.$store.getters.getRanking;
     }
   },
   beforeCreate() {
-    // fetch(
-    //   "https://apiv2.apifootball.com/?action=get_standings&league_id=148&APIkey=4fe68f2c425088b321d90b1325cabe2da79209df56b7c1c32b9d2f825ede4d21"
-    // )
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     this.data = data;
-    //   })
-    fetch("https://api-football-v1.p.rapidapi.com/v2/leagueTable/2790", {
-      method: "GET",
-      headers: {
-        "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-        "x-rapidapi-key": "48c5cfd3d6msha92bc85ca7a47abp178e66jsn450b9742e064"
-      }
-    })
-      .then(response => {
-        let data = response.json();
-        data.then(data => {
-          this.data = data["api"]["standings"][0];
-          //console.log(this.data)
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      })
-      .then(() => this.$emit("ready"));
-  }
+    this.$store.dispatch("getRanking");
+  },
 };
 </script>
 
@@ -232,14 +223,14 @@ export default {
   background-color: #bd0000;
   color: #ffffff;
 }
-.standing-team-name{
+.standing-team-name {
   text-align: left;
 }
 
-.standing-team-logo{
-    margin-left: 30px;
-    background-size: 25px;
-    width: 25px;
-    height: 25px;
+.standing-team-logo {
+  margin-left: 30px;
+  background-size: 25px;
+  width: 25px;
+  height: 25px;
 }
 </style>
